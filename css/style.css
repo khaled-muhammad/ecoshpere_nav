@@ -1,0 +1,61 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    color: white;
+}
+
+.bg-video {
+    object-fit: cover;
+    width: 100vw;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: -1;
+}
+
+.blurry {
+    backdrop-filter: blur(10px); /* Applies the blur effect */
+    background-color: rgba(0, 0, 0, 0.187) !important; /* Slight transparency */
+}
+
+.navbar {
+    backdrop-filter: blur(10px); /* Applies the blur effect */
+    background-color: rgba(0, 0, 0, 0.5) !important; /* Slight transparency */
+}
+
+.navbar-nav a {
+    margin-left: auto; /* Pushes the nav items to the right */
+}
+
+#introduction {
+    background-color: rgba(0, 0, 0, 0.187);
+    padding: 12px;
+    border-radius: 0 14px;
+    backdrop-filter: blur(10px);
+    margin-left: 0;
+    padding-left: 64px;
+}
+
+.card-img-top {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1 / 1; /* Enforces the 1:1 ratio */
+    object-fit: cover; /* Ensures the image covers the container without distortion */
+}
+
+.card, .card-body {
+    background-color: transparent !important;
+    color: white;
+    background-color: rgba(0, 0, 0, 0.382) !important; /* Slight transparency */
+    backdrop-filter: blur(10px); /* Applies the blur effect */
+}
+
+#problem-statement {
+    border-radius: 12px;
+    padding: 14px;
+}
