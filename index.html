@@ -72,20 +72,45 @@
                 <div class="col-md-8">
                     <!-- Left content (Text) -->
                     <h2 class="mt-4">Impacts on Egypt</h2>
-                    <p>Egypt is already located in a hot region, and global warming has significant economic and environmental
+                    <p>Egypt is already located in a hot region, and global warming has significant economic and
+                        environmental
                         implications. The most notable impacts include:</p>
                 </div>
-        
+
                 <!-- Right content (Video) -->
                 <div class="col-md-4">
                     <video id="global-warming-video" width="100%" muted class="gwv">
-                      <source src="videos/high_temp_graphss.mp4" type="video/mp4">
-                      Your browser does not support the video tag.
+                        <source src="videos/high_temp_graphss.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
                     </video>
-                  </div>                  
+                </div>
             </div>
-        
-            <h3>1. Rising Sea Levels</h3>
+            <div class="row">
+                <div class="col-md-8">
+                    <!-- Left content (Text) -->
+                    <h3>1. Rising Sea Levels</h3>
+                </div>
+
+                <!-- Right content (Video) -->
+                <div class="col-md-4">
+                    <div class="row">
+                        <div class="col-6">
+                            <!-- First Video -->
+                            <video id="global-sealevek-video" width="100%" muted class="gwv">
+                                <source src="videos/SealevelCropped.mp4" type="video/mp4">
+                                Your browser does not support the video tag.
+                            </video>
+                        </div>
+                        <div class="col-6">
+                            <!-- Second Video -->
+                            <video id="submergedC-video" width="100%" muted class="gwv">
+                                <source src="videos/SubmergedCropped.mp4" type="video/mp4">
+                                Your browser does not support the video tag.
+                            </video>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <p>Studies suggest that by the end of the century, sea levels in Alexandria and the Nile Delta might rise by
                 50 to 100 centimeters. Approximately 7 million people would be impacted, and around 30% of food
                 production in these areas would be at risk if 12% to 15% of the Delta's lowlands were submerged.</p>
@@ -93,8 +118,19 @@
             <h3>2. Water Scarcity and Drought</h3>
             <p>97% of Egypt's water demands are met by the Nile River. Global warming may decrease the flow of the Nile
                 by as much as 15% by 2050, severely affecting Upper Egypt's agriculture and irrigation.</p>
-
-            <h3>3. Effects on Agriculture</h3>
+                <div class="row">
+                    <div class="col-md-8">
+                        <!-- Left content (Text) -->
+                        <h3>3. Effects on Agriculture</h3>
+                    </div>
+                    <!-- Right content (Video) -->
+                    <div class="col-md-4">
+                        <video id="crops-video" width="100%" muted class="gwv">
+                            <source src="videos/CRopsCropped.mp4" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                    </div>
+                </div>
             <p>Over the next several decades, Egypt's temperature is predicted to increase by 2 to 3 degrees Celsius.
                 This rise could significantly affect crop output, with wheat yields potentially declining by up to 11%
                 and maize by 19%.</p>
@@ -186,31 +222,39 @@
     <!-- JavaScript to auto-play video on scroll -->
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-            let video = document.getElementById('global-warming-video');
+            let videos = [
+                document.getElementById('global-warming-video'),
+                document.getElementById('global-sealevek-video'),
+                document.getElementById('submergedC-video'),
+                document.getElementById('crops-video'),
+            ];
 
-            function isVideoInView() {
+            function isVideoInView(video) {
                 let rect = video.getBoundingClientRect();
                 return (rect.top >= 0 && rect.bottom <= (window.innerHeight || document.documentElement.clientHeight));
             }
 
-            function playVideoOnScroll() {
-                if (isVideoInView()) {
-                    video.play();
-                } else {
-                    video.pause();
-                }
+            function playVideosOnScroll() {
+                videos.forEach(video => {
+                    if (isVideoInView(video)) {
+                        video.play();
+                    } else {
+                        video.pause();
+                    }
+                });
             }
 
             // Check the video position when scrolling
-            window.addEventListener('scroll', playVideoOnScroll);
-            
+            window.addEventListener('scroll', playVideosOnScroll);
+
             // Initially check when the page is loaded
-            playVideoOnScroll();
+            playVideosOnScroll();
         });
     </script>
+
     <script src="js/bootstrap.min.js"></script>
 </body>
-    
+
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         const sections = document.querySelectorAll('section');
@@ -235,5 +279,5 @@
         window.addEventListener('scroll', animateOnScroll);
     });
 </script>
-    
+
 </html>
