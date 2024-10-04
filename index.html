@@ -210,5 +210,30 @@
     </script>
     <script src="js/bootstrap.min.js"></script>
 </body>
+    
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const sections = document.querySelectorAll('section');
 
+        // Function to check if the section is in view
+        function animateOnScroll() {
+            const triggerBottom = window.innerHeight / 5 * 4;
+
+            sections.forEach(section => {
+                const sectionTop = section.getBoundingClientRect().top;
+
+                if (sectionTop < triggerBottom) {
+                    section.classList.add('intro-animated');
+                }
+            });
+        }
+
+        // Initial check
+        animateOnScroll();
+
+        // Add scroll event listener
+        window.addEventListener('scroll', animateOnScroll);
+    });
+</script>
+    
 </html>
