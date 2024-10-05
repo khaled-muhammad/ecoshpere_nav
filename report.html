@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Report Factory - EcoSphere Navigators</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <style>
+        /* Additional styles specific to the report page */
+        #map {
+            height: 400px;
+            width: 100%;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .form-section {
+            background-color: rgba(0, 0, 0, 0.187);
+            padding: 20px;
+            border-radius: 14px;
+            backdrop-filter: blur(10px);
+        }
+
+        .submit-button {
+            background-color: #28a745;
+            border: none;
+        }
+
+        .submit-button:hover {
+            background-color: #218838;
+        }
+
+        .alert {
+            margin-top: 20px;
+        }
+
+        /* New styles for blurry input fields */
+        .blurry-input {
+            background-color: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            color: white !important;
+            padding: 10px;
+            backdrop-filter: blur(5px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.3s, border 0.3s;
+        }
+
+        .blurry-input:focus {
+            background-color: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            outline: none;
+        }
+
+        textarea.blurry-input {
+            resize: vertical;
+        }
+
+        /* Ensure labels are readable against the background */
+        .form-label {
+            color: white;
+        }
+
+        .submit-button {
+            background-color: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+
+        .submit-button:hover {
+            background-color: rgba(33, 136, 56, 0.9);
+            transform: scale(1.05);
+        }
+
+    </style>
+</head>
+
+<body>
+    <video class="bg-video" src="videos/earth.mp4" autoplay muted loop></video>
+    <header>
+        <nav class="navbar navbar-expand-lg bg-body-tertiary navbar-dark bg-dark">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="#">EcoSphere Navigators</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false"
+                    aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+                    <div class="navbar-nav ms-auto">
+                        <a class="nav-link" href="index.html">Home</a>
+                        <a class="nav-link" href="/map.html">Map</a>
+                        <a class="nav-link active" href="report.html">Report</a>
+                        <a class="nav-link" href="#introduction">Introduction</a>
+                        <a class="nav-link" href="#methodology">Methodology</a>
+                        <a class="nav-link" href="#team-members">Team</a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <main>
+        <section id="report" class="container mt-5">
+            <h2 class="text-center mb-4">Report a Factory with Greenhouse Gas Effects</h2>
+            <div class="form-section">
+                <form id="reportForm">
+                    <div class="mb-3">
+                        <label for="map" class="form-label">Select Location on Map</label>
+                        <div id="map"></div>
+                        <input type="hidden" id="latitude" name="latitude" required>
+                        <input type="hidden" id="longitude" name="longitude" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="placeName" class="form-label">Place Name</label>
+                        <input type="text" class="form-control blurry-input" id="placeName" name="placeName" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="info" class="form-label">Information About the Factory</label>
+                        <textarea class="form-control blurry-input" id="info" name="info" rows="4" required></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="reporterName" class="form-label">Your Name</label>
+                        <input type="text" class="form-control blurry-input" id="reporterName" name="reporterName" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="reporterEmail" class="form-label">Your Email</label>
+                        <input type="email" class="form-control blurry-input" id="reporterEmail" name="reporterEmail" required>
+                    </div>
+                    <button type="submit" class="btn submit-button">Submit Report</button>
+                </form>
+                <div id="alertPlaceholder"></div>
+            </div>
+        </section>
+    </main>
+
+    <!-- JavaScript Libraries -->
+    <script src="js/bootstrap.min.js"></script>
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <!-- Optional: Leaflet Marker Cluster for better marker handling -->
+    <script src="https://unpkg.com/leaflet.markercluster/dist/leaflet.markercluster.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.Default.css" />
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Initialize the map
+            var map = L.map('map').setView([26.8206, 30.8025], 6); // Centered on Egypt
+
+            // Add OpenStreetMap tiles
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 19,
+                attribution: '&copy; OpenStreetMap contributors'
+            }).addTo(map);
+
+            var marker;
+
+            // Handle map click
+            map.on('click', function (e) {
+                var lat = e.latlng.lat;
+                var lng = e.latlng.lng;
+
+                // If marker exists, remove it
+                if (marker) {
+                    map.removeLayer(marker);
+                }
+
+                // Add marker to the map
+                marker = L.marker([lat, lng]).addTo(map);
+
+                // Set the hidden input values
+                document.getElementById('latitude').value = lat;
+                document.getElementById('longitude').value = lng;
+            });
+
+            // Handle form submission
+            const reportForm = document.getElementById('reportForm');
+            const alertPlaceholder = document.getElementById('alertPlaceholder');
+
+            reportForm.addEventListener('submit', function (e) {
+                e.preventDefault();
+
+                // Get form values
+                const latitude = document.getElementById('latitude').value;
+                const longitude = document.getElementById('longitude').value;
+                const placeName = document.getElementById('placeName').value;
+                const info = document.getElementById('info').value;
+                const reporterName = document.getElementById('reporterName').value;
+                const reporterEmail = document.getElementById('reporterEmail').value;
+
+                // Simple validation
+                if (!latitude || !longitude) {
+                    showAlert('Please select a location on the map.', 'danger');
+                    return;
+                }
+
+                // Create report object
+                const report = {
+                    latitude,
+                    longitude,
+                    placeName,
+                    info,
+                    reporterName,
+                    reporterEmail,
+                    timestamp: new Date().toISOString()
+                };
+
+                // For demonstration, we'll log the report to the console
+                // In a real application, you'd send this data to a server
+                console.log('Report Submitted:', report);
+
+                // Optionally, save to localStorage
+                let reports = JSON.parse(localStorage.getItem('factoryReports')) || [];
+                reports.push(report);
+                localStorage.setItem('factoryReports', JSON.stringify(reports));
+
+                // Reset the form
+                reportForm.reset();
+                if (marker) {
+                    map.removeLayer(marker);
+                    marker = null;
+                }
+
+                showAlert('Your report has been submitted successfully!', 'success');
+            });
+
+            // Function to show alerts
+            function showAlert(message, type) {
+                const wrapper = document.createElement('div');
+                wrapper.innerHTML = `
+                    <div class="alert alert-${type} alert-dismissible" role="alert">
+                        ${message}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                `;
+                alertPlaceholder.append(wrapper);
+            }
+        });
+    </script>
+</body>
+
+</html>
