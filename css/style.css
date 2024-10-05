@@ -135,3 +135,8 @@ p {
     padding: 14px;
     border-radius: 14px;
 }
+
+.img-fluid {
+    border-radius: 12px;
+    width: 550px;
+}
