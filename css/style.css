@@ -18,6 +18,10 @@ body {
     z-index: -1;
 }
 
+p {
+    font-size: 18px;
+}
+
 .blurry {
     backdrop-filter: blur(10px); /* Applies the blur effect */
     background-color: rgba(0, 0, 0, 0.187) !important; /* Slight transparency */
