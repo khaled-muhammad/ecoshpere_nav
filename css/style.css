@@ -48,7 +48,8 @@ p {
 #introduction {
     background-color: rgba(0, 0, 0, 0.187);
     padding: 12px;
-    border-radius: 0 14px;
+    border-top-right-radius: 14px;
+    border-bottom-right-radius: 14px;
     backdrop-filter: blur(10px);
     margin-left: 0;
     padding-left: 64px;
