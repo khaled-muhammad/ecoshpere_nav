@@ -32,6 +32,116 @@
             </div>
         </nav>
     </header>
+
+
+    import folium
+import requests
+from branca.colormap import LinearColormap
+import geopandas as gpd
+import json
+
+# Create the main Folium map centered on Egypt
+folium_map = folium.Map(location=[26.8206, 30.8025], zoom_start=6)
+
+# URL to the GeoJSON file for Egypt as a whole (level 0)
+geojson_url_egypt = "https://geodata.ucdavis.edu/gadm/gadm4.1/json/gadm41_EGY_0.json"
+
+# Fetch the GeoJSON data for Egypt as a whole
+response_egypt = requests.get(geojson_url_egypt)
+egypt_geojson = response_egypt.json()
+
+# Add the GeoJSON layer for Egypt as a whole with highlight styling
+folium.GeoJson(
+    egypt_geojson,
+    name="Egypt",
+    style_function=lambda feature: {
+        'fillColor': '#228B22',  # Green fill color for Egypt as a whole
+        'color': 'black',        # Black border
+        'weight': 2,             # Border thickness
+        'fillOpacity': 0.5,      # Transparency
+    },
+    highlight_function=lambda feature: {
+        'fillColor': '#ffaf00',   # Highlight fill color for Egypt (yellow)
+        'color': 'blue',          # Highlight border color (blue)
+        'weight': 3,              # Thicker border on highlight
+        'fillOpacity': 0.7,       # Less transparency on highlight
+    }
+).add_to(folium_map)
+
+# Load governorates (level 1 GeoJSON) for Egypt
+# Replace with the path to your local GeoJSON file for governorates
+governorates_geojson_file = '/content/gadm41_EGY_1.json'
+
+# Load the governorates GeoJSON into a dictionary
+with open(governorates_geojson_file) as f:
+    governorates_geojson = json.load(f)
+
+# Add the governorates GeoJSON layer with a different highlight
+folium.GeoJson(
+    governorates_geojson,
+    name="Governorates",
+    style_function=lambda feature: {
+        'fillColor': 'purple',  # Purple fill for governorates
+        'color': 'black',       # Black border for governorates
+        'weight': 1,            # Thinner border for governorates
+        'fillOpacity': 0.5,     # Transparency for governorates
+    },
+    highlight_function=lambda feature: {
+        'fillColor': 'lightblue',  # Light blue highlight for governorates
+        'color': 'darkblue',       # Darker blue border on highlight
+        'weight': 2,               # Border thickness on highlight
+        'fillOpacity': 0.8,        # Less transparency on highlight
+    }
+).add_to(folium_map)
+
+# Load the CO2 emission GeoJSON file (assuming it's a local file)
+geojson_file_with_co2 = '/content/drive/MyDrive/yarab.geojson'
+
+# Load the CO2 emission data into a GeoDataFrame
+gdf = gpd.read_file(geojson_file_with_co2)
+
+# Define the min and max values for CO2 emissions
+if 'value' in gdf.columns:
+    vmin = gdf['value'].min()
+    vmax = gdf['value'].max()
+else:
+    vmin = 0  # Default min value
+    vmax = 100  # Default max value
+
+# Define a custom colormap with 4 colors for CO2 emissions
+colormap = LinearColormap(
+    ['#0000ff', '#00ff00', '#ffff00', '#ff0000'],  # Blue, green, yellow, red
+    vmin=vmin,
+    vmax=vmax
+)
+
+# Define a style function that uses the colormap for CO2 emissions
+def style_function_co2(feature):
+    value = feature['properties'].get('value', vmin)  # Use min value if 'value' is missing
+    color = colormap(value)
+    return {
+        'color': color,
+        'weight': 2,
+        'fillColor': color,
+        'fillOpacity': 0.5
+    }
+
+# Add the CO2 emission data layer with custom styling
+folium.GeoJson(
+    geojson_file_with_co2,
+    name='CO2 Emissions',
+    style_function=style_function_co2
+).add_to(folium_map)
+
+# Add the colormap legend for CO2 emissions to the map
+colormap.add_to(folium_map)
+
+# Save the final map to an HTML file
+folium_map.save("egypt_map_with_governorates_and_co2.html")
+
+# Display the map
+folium_map
+
     </main>
 
 </html>
