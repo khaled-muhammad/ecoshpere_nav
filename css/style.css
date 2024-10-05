@@ -18,6 +18,15 @@ body {
     z-index: -1;
 }
 
+canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: -1; /* Ensures that it stays in the background */
+    height: 100%;
+    width: 100%;
+}
+
 p {
     font-size: 18px;
 }
